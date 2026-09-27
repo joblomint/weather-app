@@ -1,0 +1,54 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = 'Weather App' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A live weather app — check current conditions anywhere in the world." />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <p>Powered by <a href="https://open-meteo.com" target="_blank">Open-Meteo</a></p>
+    </footer>
+
+    <style is:global>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        color: white;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        display: flex;
+        flex-direction: column;
+        transition: background 0.8s ease;
+      }
+      main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+      footer {
+        text-align: center;
+        padding: 1rem;
+        font-size: 0.8rem;
+        opacity: 0.7;
+      }
+      footer a { color: white; }
+    </style>
+  </body>
+</html>

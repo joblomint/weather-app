@@ -1,17 +1,417 @@
 ---
-
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Weather App">
+  <div class="app">
+    <header class="app-header">
+      <h1>Weather</h1>
+      <p>Check the weather anywhere in the world.</p>
+    </header>
+
+    <form id="search-form" class="search-form">
+      <input
+        type="text"
+        id="city-input"
+        placeholder="Enter a city (e.g. Nairobi, London, Tokyo)"
+        autocomplete="off"
+        required
+      />
+      <button type="submit">Search</button>
+    </form>
+
+    <div id="status" class="status"></div>
+
+    <div id="weather-card" class="weather-card hidden">
+      <div class="weather-top">
+        <div>
+          <div class="city-name" id="city-name">—</div>
+          <div class="country-name" id="country-name">—</div>
+        </div>
+        <div class="unit-toggle">
+          <button id="unit-c" class="unit-btn active">°C</button>
+          <button id="unit-f" class="unit-btn">°F</button>
+        </div>
+      </div>
+
+      <div class="weather-main">
+        <div class="weather-icon" id="weather-icon">☀️</div>
+        <div class="weather-temp" id="weather-temp">—</div>
+      </div>
+
+      <div class="weather-condition" id="weather-condition">—</div>
+
+      <div class="weather-details">
+        <div class="detail">
+          <span class="detail-label">Feels like</span>
+          <span class="detail-value" id="feels-like">—</span>
+        </div>
+        <div class="detail">
+          <span class="detail-label">Humidity</span>
+          <span class="detail-value" id="humidity">—</span>
+        </div>
+        <div class="detail">
+          <span class="detail-label">Wind</span>
+          <span class="detail-value" id="wind">—</span>
+        </div>
+        <div class="detail">
+          <span class="detail-label">Updated</span>
+          <span class="detail-value" id="updated">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .app {
+      width: 100%;
+      max-width: 520px;
+    }
+    .app-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .app-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .app-header p {
+      opacity: 0.85;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .search-form input {
+      flex: 1;
+      padding: 0.85rem 1.25rem;
+      border-radius: 12px;
+      border: none;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      backdrop-filter: blur(10px);
+      outline: none;
+    }
+    .search-form input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .search-form input:focus {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .search-form button {
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      border: none;
+      background: white;
+      color: #0f1729;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .search-form button:hover {
+      transform: scale(1.03);
+    }
+    .search-form button:active {
+      transform: scale(0.97);
+    }
+
+    .status {
+      text-align: center;
+      padding: 1rem;
+      opacity: 0.9;
+      font-size: 0.95rem;
+      min-height: 2rem;
+    }
+    .status.error { color: #ffe4e4; }
+    .status.loading { color: #fffacd; }
+
+    .weather-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      padding: 1.75rem;
+      transition: opacity 0.3s;
+    }
+    .weather-card.hidden { display: none; }
+
+    .weather-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+    .city-name {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+    .country-name {
+      font-size: 0.85rem;
+      opacity: 0.75;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.15rem;
+    }
+    .unit-toggle {
+      display: flex;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 0.2rem;
+    }
+    .unit-btn {
+      border: none;
+      background: transparent;
+      color: white;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+    .unit-btn.active {
+      background: rgba(255, 255, 255, 0.25);
+      opacity: 1;
+    }
+
+    .weather-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .weather-icon {
+      font-size: 5rem;
+      line-height: 1;
+    }
+    .weather-temp {
+      font-size: 4rem;
+      font-weight: 200;
+      letter-spacing: -0.04em;
+    }
+
+    .weather-condition {
+      text-align: center;
+      opacity: 0.85;
+      margin-bottom: 1.75rem;
+      font-size: 1rem;
+    }
+
+    .weather-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 1.25rem;
+    }
+    .detail {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .detail-label {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .detail-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+  </style>
+
+    <script>
+    // ---- Grab elements ----
+    const form = document.getElementById('search-form');
+    const cityInput = document.getElementById('city-input');
+    const status = document.getElementById('status');
+    const weatherCard = document.getElementById('weather-card');
+
+    const cityNameEl = document.getElementById('city-name');
+    const countryEl = document.getElementById('country-name');
+    const iconEl = document.getElementById('weather-icon');
+    const tempEl = document.getElementById('weather-temp');
+    const conditionEl = document.getElementById('weather-condition');
+    const feelsLikeEl = document.getElementById('feels-like');
+    const humidityEl = document.getElementById('humidity');
+    const windEl = document.getElementById('wind');
+    const updatedEl = document.getElementById('updated');
+
+    const unitC = document.getElementById('unit-c');
+    const unitF = document.getElementById('unit-f');
+
+    // ---- State ----
+    let currentWeather = null;    // stores the last fetched data
+    let currentUnit = 'C';         // 'C' or 'F'
+
+    // ---- Weather code → condition + icon mapping ----
+    // (Open-Meteo uses WMO weather codes)
+    function describeWeather(code) {
+      const map = {
+        0:  { text: 'Clear sky',           icon: '☀️' },
+        1:  { text: 'Mainly clear',        icon: '🌤️' },
+        2:  { text: 'Partly cloudy',       icon: '⛅' },
+        3:  { text: 'Overcast',            icon: '☁️' },
+        45: { text: 'Foggy',               icon: '🌫️' },
+        48: { text: 'Depositing rime fog', icon: '🌫️' },
+        51: { text: 'Light drizzle',       icon: '🌦️' },
+        53: { text: 'Moderate drizzle',    icon: '🌦️' },
+        55: { text: 'Dense drizzle',       icon: '🌧️' },
+        61: { text: 'Slight rain',         icon: '🌧️' },
+        63: { text: 'Moderate rain',       icon: '🌧️' },
+        65: { text: 'Heavy rain',          icon: '🌧️' },
+        71: { text: 'Slight snow',         icon: '🌨️' },
+        73: { text: 'Moderate snow',       icon: '🌨️' },
+        75: { text: 'Heavy snow',          icon: '❄️' },
+        80: { text: 'Rain showers',        icon: '🌦️' },
+        81: { text: 'Heavy showers',       icon: '🌧️' },
+        82: { text: 'Violent showers',     icon: '⛈️' },
+        95: { text: 'Thunderstorm',        icon: '⛈️' },
+        96: { text: 'Thunderstorm w/ hail', icon: '⛈️' },
+        99: { text: 'Thunderstorm w/ heavy hail', icon: '⛈️' },
+      };
+      return map[code] || { text: 'Unknown', icon: '❓' };
+    }
+
+    // ---- Background gradient based on weather ----
+    function setBackgroundForWeather(code, isDay) {
+      let gradient;
+      if (!isDay) {
+        gradient = 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)'; // night
+      } else if (code === 0 || code === 1) {
+        gradient = 'linear-gradient(135deg, #4facfe, #00f2fe)'; // sunny
+      } else if (code === 2 || code === 3) {
+        gradient = 'linear-gradient(135deg, #757f9a, #d7dde8)'; // cloudy
+      } else if (code >= 45 && code <= 48) {
+        gradient = 'linear-gradient(135deg, #bdc3c7, #2c3e50)'; // fog
+      } else if (code >= 51 && code <= 65) {
+        gradient = 'linear-gradient(135deg, #4b79a1, #283e51)'; // rain
+      } else if (code >= 71 && code <= 75) {
+        gradient = 'linear-gradient(135deg, #83a4d4, #b6fbff)'; // snow
+      } else if (code >= 95) {
+        gradient = 'linear-gradient(135deg, #232526, #414345)'; // storm
+      } else {
+        gradient = 'linear-gradient(135deg, #4facfe, #00f2fe)';
+      }
+      document.body.style.background = gradient;
+    }
+
+    // ---- Format temperature based on unit ----
+    function formatTemp(celsius) {
+      if (currentUnit === 'C') return `${Math.round(celsius)}°`;
+      return `${Math.round(celsius * 9/5 + 32)}°`;
+    }
+
+    // ---- Update UI from currentWeather data ----
+    function renderWeather() {
+      if (!currentWeather) return;
+      const w = currentWeather;
+
+      cityNameEl.textContent = w.city;
+      countryEl.textContent = w.country;
+      iconEl.textContent = w.icon;
+      conditionEl.textContent = w.condition;
+      tempEl.textContent = formatTemp(w.temp);
+
+      feelsLikeEl.textContent = formatTemp(w.feelsLike);
+      humidityEl.textContent = `${w.humidity}%`;
+      windEl.textContent = `${Math.round(w.wind)} km/h`;
+      updatedEl.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      setBackgroundForWeather(w.code, w.isDay);
+    }
+
+    // ---- Fetch coordinates from city name ----
+    async function geocodeCity(city) {
+      const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Geocoding failed');
+      const data = await res.json();
+      if (!data.results || data.results.length === 0) {
+        throw new Error(`No results found for "${city}"`);
+      }
+      const r = data.results[0];
+      return {
+        name: r.name,
+        country: r.country,
+        lat: r.latitude,
+        lon: r.longitude,
+      };
+    }
+
+    // ---- Fetch weather from coordinates ----
+    async function fetchWeather(lat, lon) {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,is_day&timezone=auto`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Weather fetch failed');
+      const data = await res.json();
+      return data.current;
+    }
+
+    // ---- Main search handler ----
+    async function handleSearch(city) {
+      status.className = 'status loading';
+      status.textContent = 'Searching...';
+      weatherCard.classList.add('hidden');
+
+      try {
+        const location = await geocodeCity(city);
+        const weather = await fetchWeather(location.lat, location.lon);
+        const info = describeWeather(weather.weather_code);
+
+        currentWeather = {
+          city: location.name,
+          country: location.country,
+          code: weather.weather_code,
+          condition: info.text,
+          icon: info.icon,
+          temp: weather.temperature_2m,
+          feelsLike: weather.apparent_temperature,
+          humidity: weather.relative_humidity_2m,
+          wind: weather.wind_speed_10m,
+          isDay: weather.is_day === 1,
+        };
+
+        renderWeather();
+        weatherCard.classList.remove('hidden');
+        status.textContent = '';
+        status.className = 'status';
+      } catch (err) {
+        status.className = 'status error';
+        status.textContent = err.message || 'Something went wrong. Try again.';
+      }
+    }
+
+    // ---- Form submit ----
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const city = cityInput.value.trim();
+      if (city) handleSearch(city);
+    });
+
+    // ---- Unit toggle ----
+    unitC.addEventListener('click', () => {
+      currentUnit = 'C';
+      unitC.classList.add('active');
+      unitF.classList.remove('active');
+      renderWeather();
+    });
+    unitF.addEventListener('click', () => {
+      currentUnit = 'F';
+      unitF.classList.add('active');
+      unitC.classList.remove('active');
+      renderWeather();
+    });
+
+    // ---- Auto-load Nairobi on first visit (nice touch) ----
+    handleSearch('Nairobi');
+  </script>
+</BaseLayout>
