@@ -1,43 +1,32 @@
-# Astro Starter Kit: Minimal
+# Weather App 🌤️
 
-```sh
-npm create astro@latest -- --template minimal
-```
+A live weather app that shows current conditions for any city in the world, built with **Astro** and the **[Open-Meteo API](https://open-meteo.com)**.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🔗 Live Demo
 
-## 🚀 Project Structure
+**[https://projects.archieinnit.kdns.fr/weather/](https://projects.archieinnit.kdns.fr/weather/)**
 
-Inside of your Astro project, you'll see the following folders and files:
+## ✨ Features
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+- **Search any city** in the world
+- Auto-detects coordinates using Open-Meteo's geocoding API
+- Shows **current temperature**, condition, and emoji icon
+- **Feels-like** temperature, **humidity**, and **wind speed**
+- **°C / °F toggle**
+- **Dynamic background** that changes based on weather
+- **Graceful error handling**
+- Auto-loads Nairobi on first visit
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🛠️ Tech Stack
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- Astro
+- Vanilla JavaScript (fetch, async/await)
+- Open-Meteo API (no API key needed!)
 
-Any static assets, like images, can be placed in the `public/` directory.
+## 🚀 Run Locally
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```bash
+git clone https://github.com/joblomint/weather-app.git
+cd weather-app
+npm install
+npm run dev
