@@ -4,7 +4,9 @@ A live weather app that shows current conditions for any city in the world, buil
 
 ## 🔗 Live Demo
 
-**[https://projects.archieinnit.kdns.fr/weather/](https://projects.archieinnit.kdns.fr/weather/)**
+## 🔗 Live Demo
+
+**[https://weather.jkay.my.id/](https://weather.jkay.my.id/)**
 
 ## ✨ Features
 
